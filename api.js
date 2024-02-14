@@ -19,7 +19,7 @@
         }
     }
 
-    window.JAPI = new Proxy(API_DATA, {
+    window.$$API_NAME$$ = new Proxy(API_DATA, {
         get(target, name) {
             const value = target[name]
             if (value !== undefined) return value;

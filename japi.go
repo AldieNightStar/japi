@@ -15,15 +15,17 @@ type Handler func(string) (string, error)
 
 type Api struct {
 	Prefix   string
+	ApiName  string
 	Handlers map[string]Handler
 	JsString string
 }
 
-func NewApi(prefix string) *Api {
+func NewApi(prefix string, apiName string) *Api {
 	return &Api{
 		Prefix:   prefix,
+		ApiName:  apiName,
 		Handlers: make(map[string]Handler),
-		JsString: buildJsForPrefix(prefix),
+		JsString: buildJsForPrefixAndApiName(prefix, apiName),
 	}
 }
 
@@ -33,8 +35,10 @@ func (a *Api) HandleScript(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, a.JsString)
 }
 
-func buildJsForPrefix(prefix string) string {
-	return strings.ReplaceAll(japiJsScript, "$$PREFIX$$", prefix)
+func buildJsForPrefixAndApiName(prefix, apiName string) string {
+	var s = strings.ReplaceAll(japiJsScript, "$$PREFIX$$", prefix)
+	s = strings.ReplaceAll(s, "$$API_NAME$$", apiName)
+	return s
 }
 
 func (a *Api) Register(name string, handler Handler) {
